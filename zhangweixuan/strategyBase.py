@@ -6,6 +6,7 @@ from dataProcessor import DataProcessor
 from abc import ABC, abstractmethod
 
 
+# 123
 class StrategyBase(ABC):
 	def __init__(self,
 	             data_processor: DataProcessor,
@@ -150,7 +151,7 @@ class StrategyBase(ABC):
 
 		# 移除无效值
 		returns = returns.replace([np.inf, -np.inf], np.nan).dropna()
-		
+
 		if len(returns) == 0:
 			return {
 				'var_95': 0.0,
@@ -163,21 +164,21 @@ class StrategyBase(ABC):
 		# 计算年化收益率和波动率
 		annual_return = returns.mean() * 252
 		annual_volatility = returns.std() * np.sqrt(252)
-		
+
 		# 计算风险指标
 		var_95 = np.percentile(returns, 5)
 		expected_shortfall = returns[returns <= var_95].mean()
-		
+
 		# 计算夏普比率
 		risk_free_rate = 0.02  # 假设无风险利率为2%
 		excess_return = annual_return - risk_free_rate
 		sharpe_ratio = excess_return / annual_volatility if annual_volatility != 0 else 0
-		
+
 		# 计算索提诺比率
 		downside_returns = returns[returns < 0]
 		downside_std = downside_returns.std() * np.sqrt(252) if len(downside_returns) > 0 else 0
 		sortino_ratio = excess_return / downside_std if downside_std != 0 else 0
-		
+
 		return {
 			'var_95': var_95,
 			'expected_shortfall': expected_shortfall,
