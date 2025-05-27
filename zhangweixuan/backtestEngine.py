@@ -44,7 +44,10 @@ class BacktestEngine:
         """
         计算交易手续费
         """
-        return price * quantity * self.commission_rate
+        # 每张合约固定手续费（港币）
+        commission_per_contract = 100
+        commission_rmb = commission_per_contract * quantity
+        return commission_rmb
     
     def _execute_buy(self, price: float, quantity: int) -> None:
         """

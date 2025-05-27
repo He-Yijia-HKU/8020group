@@ -53,6 +53,7 @@ class StrategyBase(ABC):
         """
 		pass
 
+	@abstractmethod
 	def risk_management(self, position: int, price: float, equity: float) -> bool:
 		"""
         风险管理检查
@@ -64,23 +65,31 @@ class StrategyBase(ABC):
         返回:
             是否通过风险检查
         """
-		# 检查持仓规模
-		if not self._check_position_size(position, price):
-			return False
+		pass
 
-		# 检查回撤
-		if not self._check_drawdown(equity):
-			return False
+	@abstractmethod
+	def calculate_position_size(self, price: float, signal: float) -> int:
+		"""
+        计算开仓数量
+        
+        参数:
+            price: 当前价格
+            signal: 交易信号强度
+        返回:
+            建议开仓数量
+        """
+		pass
 
-		# 检查止损
-		if position != 0 and self._check_stop_loss(price):
-			return False
-
-		# 检查追踪止损
-		if position != 0 and self._check_trailing_stop(price):
-			return False
-
-		return True
+	@abstractmethod
+	def update_position(self, position: int, price: float) -> None:
+		"""
+        更新持仓状态
+        
+        参数:
+            position: 新的持仓数量
+            price: 当前价格
+        """
+		pass
 
 	def _check_position_size(self, position: int, price: float) -> bool:
 		"""
@@ -118,18 +127,6 @@ class StrategyBase(ABC):
 			self.lowest_price = min(self.lowest_price, current_price)
 			return current_price >= self.lowest_price * (1 + self.trailing_stop_pct)
 		return False
-
-	def update_position(self, position: int, price: float) -> None:
-		"""
-        更新持仓状态
-        """
-		if self.positions == 0 and position != 0:  # 新开仓
-			self.entry_price = price
-			if position > 0:
-				self.highest_price = price
-			else:
-				self.lowest_price = price
-		self.positions = position
 
 	def calculate_risk_metrics(self, returns: pd.Series) -> dict:
 		"""
