@@ -1,5 +1,6 @@
 from dataProcessor import DataProcessor
 from ARIMAStrategy import ARIMAStrategy
+from HARARIMAStrategy import HARARIMAStrategy
 from backtestEngine import BacktestEngine
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,13 +12,12 @@ def main():
 	# 1. 加载数据
 	data_processor = DataProcessor(
 		file_path="hi1_20170701_20200609.csv",
-		debug=True,
-		test_days=7
+		debug=False,
 	)
 	df = data_processor.data
 
 	# 2. 创建策略实例
-	strategy = ARIMAStrategy(
+	strategy = HARARIMAStrategy(
 		data_processor=data_processor,
 		p=1,  # AR阶数
 		d=1,  # 差分阶数
